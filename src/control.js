@@ -1,4 +1,4 @@
-import archerProtocol from './archer_protocol_pb.js'; // Adjust import path as needed
+import archerProtocol from './proto/archer_protocol_pb.js'; // Adjust import path as needed
 
 export const buildGetCurrentDevStatusPayload = () => {
     const getHostDevStatus = new archerProtocol.GetHostDevStatus();
@@ -194,3 +194,5 @@ export const buildSetColorScheme = (colorScheme) => {
     // Serialize the ClientPayload message to a binary string
     return  clientPayload.serializeBinary();
 };
+
+export default archerProtocol;
