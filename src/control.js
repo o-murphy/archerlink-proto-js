@@ -104,7 +104,7 @@ export const buildSetZoomLevelPayload = (zoomCur, zoomMax) => {
 };
 
 const getNextAgcMode = (currentAgc) => {
-    const AGCMode = archerProtocol.AGCMode;
+    const AGCMode = ArcherProtocol.AGCMode;
 
     // Convert the enum values to an array and get their keys
     const agcModes = Object.keys(AGCMode)
@@ -136,15 +136,15 @@ const getNextAgcMode = (currentAgc) => {
 
 export const buildSetAgcModePayload = (agcCur) => {
     // Create a SetAgcMode message and set the mode
-    const setAgc = new archerProtocol.SetAgcMode();
+    const setAgc = new ArcherProtocol.SetAgcMode();
     setAgc.setMode(getNextAgcMode(agcCur));
 
     // Create a Command message and set the SetAgcMode message
-    const command = new archerProtocol.Command();
+    const command = new ArcherProtocol.Command();
     command.setSetagc(setAgc);
 
     // Create a ClientPayload message and set the Command message
-    const clientPayload = new archerProtocol.ClientPayload();
+    const clientPayload = new ArcherProtocol.ClientPayload();
     clientPayload.setCommand(command);
 
     // Serialize the ClientPayload message to a binary string (Uint8Array)
@@ -152,7 +152,7 @@ export const buildSetAgcModePayload = (agcCur) => {
 }
 
 const getNextColorScheme = (currentColor) => {
-    const ColorScheme = archerProtocol.ColorScheme;
+    const ColorScheme = ArcherProtocol.ColorScheme;
 
     // Convert the enum values to an array and get their keys
     const colorSchemes = Object.keys(ColorScheme)
@@ -183,17 +183,17 @@ const getNextColorScheme = (currentColor) => {
 };
 
 export const buildSetColorScheme = (colorScheme) => {
-    const setColor = new archerProtocol.SetColorScheme();
+    const setColor = new ArcherProtocol.SetColorScheme();
     setColor.setScheme(getNextColorScheme(colorScheme));
 
     // Create a Command message and set the SetColorScheme message
-    const command = new archerProtocol.Command();
+    const command = new ArcherProtocol.Command();
     console.log('command', command)
 
     command.setSetpallette(setColor);
 
     // Create a ClientPayload message and set the Command message
-    const clientPayload = new archerProtocol.ClientPayload();
+    const clientPayload = new ArcherProtocol.ClientPayload();
     clientPayload.setCommand(command);
 
     // Serialize the ClientPayload message to a binary string
