@@ -1,6 +1,7 @@
 {
   "name": "@archerlink/protocol",
   "version": "1.0.0-beta.1",
+  "main": "src/index.js",
   "description": "Archerlink Proto-Messages",
   "type": "module",
   "scripts": {
