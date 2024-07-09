@@ -1,10 +1,10 @@
-import archerProtocol from './proto/archer_protocol_pb.js'; // Adjust import path as needed
+import ArcherProtocol from './archer_protocol_pb.js'; // Adjust import path as needed
 
 export const buildGetCurrentDevStatusPayload = () => {
-    const getHostDevStatus = new archerProtocol.GetHostDevStatus();
-    const command = new archerProtocol.Command();
+    const getHostDevStatus = new ArcherProtocol.GetHostDevStatus();
+    const command = new ArcherProtocol.Command();
     command.setGethostdevstatus(getHostDevStatus);
-    const clientPayload = new archerProtocol.ClientPayload();
+    const clientPayload = new ArcherProtocol.ClientPayload();
     clientPayload.setCommand(command)
     console.log("getter payload", JSON.stringify(clientPayload.toObject()))
     return clientPayload.serializeBinary();
@@ -21,7 +21,7 @@ export const parseGetCurrentDevStatus = async (payload) => {
         const uint8Array = new Uint8Array(payload);
 
         // Deserialize the binary data
-        const hostPayload = archerProtocol.HostPayload.deserializeBinary(uint8Array);
+        const hostPayload = ArcherProtocol.HostPayload.deserializeBinary(uint8Array);
 
         // Log the parsed object to inspect its contents
         console.log('Parsed host payload:', hostPayload.toObject());
@@ -35,15 +35,15 @@ export const parseGetCurrentDevStatus = async (payload) => {
 
 export const buildTriggerFFCPayload = () => {
     // Create a TriggerCmd message with the TRIGGER_FFC command
-    const triggerCmd = new archerProtocol.TriggerCmd();
-    triggerCmd.setCmd(archerProtocol.CMDDirect.TRIGGER_FFC)
+    const triggerCmd = new ArcherProtocol.TriggerCmd();
+    triggerCmd.setCmd(ArcherProtocol.CMDDirect.TRIGGER_FFC)
 
     // Create a Command message and set the TriggerCmd message directly in the constructor
-    const command = new archerProtocol.Command();
+    const command = new ArcherProtocol.Command();
     command.setCmdtrigger(triggerCmd); // Assuming this method exists
 
     // Create a ClientPayload message and set the Command message directly in the constructor
-    const clientPayload = new archerProtocol.ClientPayload();
+    const clientPayload = new ArcherProtocol.ClientPayload();
     clientPayload.setCommand(command); // Assuming this method exists
 
     // Serialize the ClientPayload message to a binary string
@@ -51,20 +51,23 @@ export const buildTriggerFFCPayload = () => {
 };
 
 const getNextZoomLevel = (currentZoom, maxZoom) => {
-    const Zoom = archerProtocol.Zoom;
-
     // Convert the enum values to an array and get their keys
+    const Zoom = ArcherProtocol.Zoom
     const zoomLevels = Object.keys(Zoom)
         .filter(key => !isNaN(Number(Zoom[key]))) // Filter out non-numeric keys
         .map(key => Zoom[key])
-        .filter(value => value !== Zoom.UNKNOWN_ZOOM_LEVEL) // Filter out UNKNOWN_ZOOM_LEVEL
-        .filter(value => value <= maxZoom); // Filter out zoom levels greater than maxZoom
+        .filter(value => value !== Zoom.UNKNOWN_ZOOM_LEVEL); // Filter out UNKNOWN_ZOOM_LEVEL
+
+    // Filter by maxZoom if maxZoom > UNKNOWN_ZOOM_LEVEL
+    const filteredZoomLevels = maxZoom > Zoom.UNKNOWN_ZOOM_LEVEL
+        ? zoomLevels.filter(value => value <= maxZoom)
+        : zoomLevels;
 
     // Find the index of the current zoom level
-    const currentIndex = zoomLevels.indexOf(currentZoom);
+    const currentIndex = filteredZoomLevels.indexOf(currentZoom);
 
     // Debugging information
-    console.log("Zoom Levels Array:", zoomLevels);
+    console.log("Zoom Levels Array:", filteredZoomLevels);
     console.log("Current Zoom:", currentZoom);
     console.log("Current Index:", currentIndex);
 
@@ -73,27 +76,27 @@ const getNextZoomLevel = (currentZoom, maxZoom) => {
     }
 
     // Calculate the next index in a circular manner
-    const nextIndex = (currentIndex + 1) % zoomLevels.length;
+    const nextIndex = (currentIndex + 1) % filteredZoomLevels.length;
 
     // Debugging information
     console.log("Next Index:", nextIndex);
-    console.log("Next Zoom Level:", zoomLevels[nextIndex]);
+    console.log("Next Zoom Level:", filteredZoomLevels[nextIndex]);
 
-    return zoomLevels[nextIndex];
+    return filteredZoomLevels[nextIndex];
 };
 
 export const buildSetZoomLevelPayload = (zoomCur, zoomMax) => {
     // Create a SetZoomLevel message and set the zoom level
-    const setZoomLevel = new archerProtocol.SetZoomLevel();
+    const setZoomLevel = new ArcherProtocol.SetZoomLevel();
     const nextZoom = getNextZoomLevel(zoomCur, zoomMax)
     setZoomLevel.setZoomlevel(nextZoom);
 
     // Create a Command message and set the SetZoomLevel message
-    const command = new archerProtocol.Command();
+    const command = new ArcherProtocol.Command();
     command.setSetzoom(setZoomLevel);
 
     // Create a ClientPayload message and set the Command message
-    const clientPayload = new archerProtocol.ClientPayload();
+    const clientPayload = new ArcherProtocol.ClientPayload();
     clientPayload.setCommand(command);
 
     // Serialize the ClientPayload message to a binary string (Uint8Array)
@@ -185,7 +188,9 @@ export const buildSetColorScheme = (colorScheme) => {
 
     // Create a Command message and set the SetColorScheme message
     const command = new archerProtocol.Command();
-    command.setColorScheme(setColor);
+    console.log('command', command)
+
+    command.setSetpallette(setColor);
 
     // Create a ClientPayload message and set the Command message
     const clientPayload = new archerProtocol.ClientPayload();
@@ -195,4 +200,4 @@ export const buildSetColorScheme = (colorScheme) => {
     return  clientPayload.serializeBinary();
 };
 
-export default archerProtocol;
+export default ArcherProtocol;
