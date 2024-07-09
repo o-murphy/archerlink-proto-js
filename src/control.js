@@ -1,4 +1,4 @@
-import ArcherProtocol from './archer_protocol_pb.js'; // Adjust import path as needed
+import ArcherProtocol from './proto/archer_protocol_pb.js'; // Adjust import path as needed
 
 export const buildGetCurrentDevStatusPayload = () => {
     const getHostDevStatus = new ArcherProtocol.GetHostDevStatus();
